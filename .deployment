@@ -1,2 +1,2 @@
 [config]
-project = src\BananaTracks.Web\BananaTracks.Web.csproj
+project = src/BananaTracks.Web
