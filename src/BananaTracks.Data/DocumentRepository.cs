@@ -13,7 +13,7 @@ namespace BananaTracks.Data
     public class DocumentRepository<T> where T : EntityBase
     {
         private const string DatabaseId = "BananaTracks";
-        private const string CollectionId = "Activities";
+        private const string CollectionId = "Items";
 
         private readonly IDocumentClient _client;
         private readonly Uri _collectionUri;

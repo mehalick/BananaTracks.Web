@@ -1,9 +1,7 @@
-﻿using System;
-using BananaTracks.Data;
+﻿using BananaTracks.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -37,16 +35,7 @@ namespace BananaTracks.Web
             var endpoint = Configuration["DocumentDB:Endpoint"];
             var authKey = Configuration["DocumentDB:AuthKey"];
 
-            var client =  new DocumentClient(new Uri(endpoint), authKey, new ConnectionPolicy
-            {
-                ConnectionMode = ConnectionMode.Direct,
-                ConnectionProtocol = Protocol.Tcp,
-                EnableEndpointDiscovery = false
-            });
-
-            client.OpenAsync().Wait();
-
-            return client;
+            return DocumentClientFactory.CreateClient(endpoint, authKey);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
