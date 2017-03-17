@@ -1,2 +1,2 @@
 [config]
-DEPLOYMENT_SOURCE = src
+project = src\BananaTracks.Web
