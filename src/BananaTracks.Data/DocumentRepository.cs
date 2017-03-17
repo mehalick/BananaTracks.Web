@@ -12,8 +12,8 @@ namespace BananaTracks.Data
 {
     public class DocumentRepository<T> where T : EntityBase
     {
-        private const string DatabaseId = "BananaTracks";
-        private const string CollectionId = "Items";
+        private const string DatabaseId = DocumentClientFactory.DatabaseId;
+        private const string CollectionId = DocumentClientFactory.CollectionId;
 
         private readonly IDocumentClient _client;
         private readonly Uri _collectionUri;
@@ -123,7 +123,7 @@ namespace BananaTracks.Data
         //            await _client.CreateDocumentCollectionAsync(
         //                UriFactory.CreateDatabaseUri(DatabaseId),
         //                new DocumentCollection { Id = CollectionId },
-        //                new RequestOptions { OfferThroughput = 1000 });
+        //                new RequestOptions { OfferThroughput = 400 });
         //        }
         //        else
         //        {
