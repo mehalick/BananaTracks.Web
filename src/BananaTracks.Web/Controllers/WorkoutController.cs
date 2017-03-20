@@ -24,7 +24,7 @@ namespace BananaTracks.Web.Controllers
             return Ok(workouts);
         }
 
-        [HttpGet("id:guid")]
+        [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetWorkoutById(string id)
         {
             var workout = await _workoutService.GetWorkoutById(id);
@@ -42,6 +42,14 @@ namespace BananaTracks.Web.Controllers
             var workout = await _workoutService.AddWorkout(model.Activity.Id, model);
 
             return CreatedAtAction(nameof(GetWorkoutById), new { id = workout.Id }, workout);
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteWorkout(string id)
+        {
+            await _workoutService.DeleteWorkout(id);
+
+            return Ok();
         }
     }
 }

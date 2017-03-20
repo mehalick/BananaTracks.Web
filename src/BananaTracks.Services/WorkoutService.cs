@@ -43,5 +43,10 @@ namespace BananaTracks.Services
 
             return await _workoutRepository.CreateItem(workout);
         }
+
+        public async Task DeleteWorkout(string id)
+        {
+            await _workoutRepository.DeleteItem(id);
+        }
     }
 }
