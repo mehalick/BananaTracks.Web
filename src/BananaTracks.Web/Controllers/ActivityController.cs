@@ -8,50 +8,39 @@ using System.Threading.Tasks;
 namespace BananaTracks.Web.Controllers
 {
     [Route("api/activities")]
-    public class ActivityController : Controller
+    public class ActivityController : ApiBaseController
     {
         private readonly ActivityService _activitiesService;
 
         public ActivityController(IDocumentClient documentClient)
         {
-            _activitiesService = new ActivityService(documentClient);   
+            _activitiesService = new ActivityService(documentClient);
         }
 
         [HttpGet]
-        public async Task<IReadOnlyCollection<Activity>> Get()
+        public async Task<IReadOnlyCollection<Activity>> GetActivities()
         {
             return await _activitiesService.GetActivities();
         }
 
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetActivityById(string id)
         {
-            return "value";
+            var activity = await _activitiesService.GetActivityById(id);
+            if (activity == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(activity);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post()
+        public async Task<IActionResult> AddActivity([FromBody]Activity model)
         {
-            var activity = new Activity
-            {
-                Name = "Weights"
-            };
+            var activity = await _activitiesService.AddActivity(model);
 
-            await _activitiesService.AddActivity(activity);
-
-            return Ok(activity.Id);
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            return CreatedAtAction(nameof(GetActivityById), new { id = activity.Id }, activity);
         }
     }
 }

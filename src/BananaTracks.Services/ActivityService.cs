@@ -18,9 +18,14 @@ namespace BananaTracks.Services
 
         public async Task<IReadOnlyCollection<Activity>> GetActivities()
         {
-            var activities = await _activityRepository.GetItems(i => true);
+            var activities = await _activityRepository.GetAll();
 
-            return activities.ToList();
+            return activities.OrderBy(i => i.Name).ToList();
+        }
+
+        public async Task<Activity> GetActivityById(string id)
+        {
+            return await _activityRepository.GetById(id);
         }
 
         public async Task<Activity> AddActivity(Activity activity)

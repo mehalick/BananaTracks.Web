@@ -12,8 +12,8 @@ namespace BananaTracks.Data
 {
     public class DocumentRepository<T> where T : EntityBase
     {
-        private const string DatabaseId = DocumentClientFactory.DatabaseId;
-        private const string CollectionId = DocumentClientFactory.CollectionId;
+        private const string DatabaseId = DatabaseSettings.DatabaseId;
+        private const string CollectionId = DatabaseSettings.CollectionId;
 
         private readonly IDocumentClient _client;
         private readonly Uri _collectionUri;
@@ -29,12 +29,13 @@ namespace BananaTracks.Data
             return UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id);
         }
 
-        public async Task<T> GetItem(string id)
+        public async Task<T> GetById(string id)
         {
             try
             {
                 var document = await _client.ReadDocumentAsync(GetDocumentUri(id));
-                return (T)(dynamic)document;
+
+                return (T)(dynamic)document.Resource;
             }
             catch (DocumentClientException e)
             {
@@ -45,6 +46,11 @@ namespace BananaTracks.Data
 
                 throw;
             }
+        }
+
+        public async Task<IReadOnlyCollection<T>> GetAll()
+        {
+            return await GetItems(_ => true);
         }
 
         public async Task<IReadOnlyCollection<T>> GetItems(Expression<Func<T, bool>> predicate)
@@ -83,53 +89,5 @@ namespace BananaTracks.Data
         {
             await _client.DeleteDocumentAsync(GetDocumentUri(id));
         }
-
-        //public static void Initialize()
-        //{
-        //    _client = new DocumentClient(new Uri(Endpoint), Key, new ConnectionPolicy { EnableEndpointDiscovery = false });
-        //    CreateDatabaseIfNotExistsAsync().Wait();
-        //    CreateCollectionIfNotExistsAsync().Wait();
-        //}
-
-        //private static async Task CreateDatabaseIfNotExistsAsync()
-        //{
-        //    try
-        //    {
-        //        await _client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(DatabaseId));
-        //    }
-        //    catch (DocumentClientException e)
-        //    {
-        //        if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
-        //        {
-        //            await _client.CreateDatabaseAsync(new Database { Id = DatabaseId });
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-        //}
-
-        //private static async Task CreateCollectionIfNotExistsAsync()
-        //{
-        //    try
-        //    {
-        //        await _client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId));
-        //    }
-        //    catch (DocumentClientException e)
-        //    {
-        //        if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
-        //        {
-        //            await _client.CreateDocumentCollectionAsync(
-        //                UriFactory.CreateDatabaseUri(DatabaseId),
-        //                new DocumentCollection { Id = CollectionId },
-        //                new RequestOptions { OfferThroughput = 400 });
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-        //}
     }
 }

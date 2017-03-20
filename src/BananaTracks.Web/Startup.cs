@@ -1,4 +1,5 @@
-﻿using BananaTracks.Data;
+﻿using System.Threading.Tasks;
+using BananaTracks.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Documents;
@@ -26,16 +27,16 @@ namespace BananaTracks.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            //services.Configure<DocumentDbSettings>(Configuration.GetSection("DocumentDB"));
-            services.AddSingleton(GetDocumentClient());
+
+            services.AddSingleton(GetDocumentClient().Result);
         }
 
-        private IDocumentClient GetDocumentClient()
+        private async Task<IDocumentClient> GetDocumentClient()
         {
             var endpoint = Configuration["DocumentDB:Endpoint"];
             var authKey = Configuration["DocumentDB:AuthKey"];
 
-            return DocumentClientFactory.CreateClient(endpoint, authKey);
+            return await DocumentClientFactory.CreateClient(endpoint, authKey);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)

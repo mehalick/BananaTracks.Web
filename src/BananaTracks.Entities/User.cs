@@ -1,23 +1,10 @@
-﻿using Newtonsoft.Json;
-
-namespace BananaTracks.Entities
+﻿namespace BananaTracks.Entities
 {
-    public class User
+    public class User : EntityBase
     {
-        [JsonProperty(PropertyName = "userId")]
-        public string UserId { get; set; }
-
-        [JsonProperty(PropertyName = "name")]
-        public string Name { get; set; }
-    }
-
-    public class Activity : EntityBase
-    {
-        public string Name { get; set; }
-    }
-
-    public class Workout
-    {
-        
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
 }

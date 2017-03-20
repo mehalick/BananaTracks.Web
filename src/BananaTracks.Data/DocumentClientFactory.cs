@@ -7,10 +7,7 @@ namespace BananaTracks.Data
 {
     public static class DocumentClientFactory
     {
-        public const string DatabaseId = "BananaTracks";
-        public const string CollectionId = "Items";
-
-        public static IDocumentClient CreateClient(string endpoint, string authKey)
+        public static async Task<IDocumentClient> CreateClient(string endpoint, string authKey)
         {
             var client = new DocumentClient(new Uri(endpoint), authKey, new ConnectionPolicy
             {
@@ -19,9 +16,8 @@ namespace BananaTracks.Data
                 EnableEndpointDiscovery = false
             });
 
-            client.OpenAsync().Wait();
-
-            CreateCollectionIfNotExistsAsync(client).Wait();
+            await CreateDatabaseIfNotExistsAsync(client);
+            await CreateCollectionIfNotExistsAsync(client);
 
             return client;
         }
@@ -30,13 +26,13 @@ namespace BananaTracks.Data
         {
             try
             {
-                await client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(DatabaseId));
+                await client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(DatabaseSettings.DatabaseId));
             }
             catch (DocumentClientException e)
             {
                 if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    await client.CreateDatabaseAsync(new Database { Id = DatabaseId });
+                    await client.CreateDatabaseAsync(new Database { Id = DatabaseSettings.DatabaseId });
                 }
                 else
                 {
@@ -49,15 +45,15 @@ namespace BananaTracks.Data
         {
             try
             {
-                await client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId));
+                await client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(DatabaseSettings.DatabaseId, DatabaseSettings.CollectionId));
             }
             catch (DocumentClientException e)
             {
                 if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
                     await client.CreateDocumentCollectionAsync(
-                        UriFactory.CreateDatabaseUri(DatabaseId),
-                        new DocumentCollection { Id = CollectionId },
+                        UriFactory.CreateDatabaseUri(DatabaseSettings.DatabaseId),
+                        new DocumentCollection { Id = DatabaseSettings.CollectionId },
                         new RequestOptions { OfferThroughput = 400 });
                 }
                 else
