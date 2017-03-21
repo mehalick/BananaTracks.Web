@@ -24,6 +24,14 @@ namespace BananaTracks.Web.Controllers
             return Ok(workouts);
         }
 
+        [HttpGet("recent")]
+        public async Task<IActionResult> GetRecentWorkouts()
+        {
+            var workouts = await _workoutService.GetRecentWorkouts(90);
+
+            return Ok(workouts);
+        }
+
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetWorkoutById(string id)
         {

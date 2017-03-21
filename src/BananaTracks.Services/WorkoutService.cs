@@ -26,6 +26,14 @@ namespace BananaTracks.Services
             return workouts.OrderBy(i => i.StartUtc).ToList();
         }
 
+        public async Task<IReadOnlyCollection<Workout>> GetRecentWorkouts(int days)
+        {
+            var daysSince = DateTime.UtcNow.Date.AddDays(-days);
+            var workouts = await _workoutRepository.GetItems(i => i.StartUtc >= daysSince);
+
+            return workouts.OrderBy(i => i.StartUtc).ToList();
+        }
+
         public async Task<Workout> GetWorkoutById(string id)
         {
             return await _workoutRepository.GetById(id);
